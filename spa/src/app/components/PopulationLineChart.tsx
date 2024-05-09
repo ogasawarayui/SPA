@@ -12,7 +12,7 @@ import {
   ChartOptions,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, ReactNode } from "react";
 
 ChartJS.register(
   CategoryScale,
@@ -25,6 +25,8 @@ ChartJS.register(
 );
 
 type YearlyPopulationData = {
+  prefName: ReactNode;
+  prefCode: string | undefined;
   year: number;
   value: number;
 };

@@ -2,12 +2,17 @@
 
 import PopulationLineChart from "./components/PopulationLineChart";
 import { useCallback, useEffect, useState } from "react";
-import BOX from "./components/checkbox";
+
+type YearlyPopulationData = {
+  year: number;
+  value: number;
+};
+
 
 export default function Home() {
   const [populationData, setPopulationData] = useState<YearlyPopulationData[]>([]);
   const [prefCode, setPrefCode] = useState("20")
-  console.log(prefCode)
+
   const fetchPopulationData = useCallback(async () => {
     const response = await fetch(
       // クエリパラメーターで東京のデータを取得しているので、ここを変更すればその都度データを取得できます(クエリパラメーターっていうのは、URLの末尾についている?からのパラメーター。?の後に〇〇=〇〇という感じで書くとURL経由でデータを渡せる)
