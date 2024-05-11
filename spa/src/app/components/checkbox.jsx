@@ -20,19 +20,17 @@ const PrefectureCheckbox = ({ onPrefectureChange }) => {
         }
       );
       const data = await response.json();
-      console.log(data);
       setPrefectures(data.result || []); // データがなければ空のリスト
     } catch (error) {
       console.error("Error fetching prefectures:", error);
       setPrefectures([]); // エラー時に空のリスト
+    } finally {
+      setLoading(false); // ロード完了
     }
   };
 
-  console.log(prefectures);
-
   useEffect(() => {
     fetchPrefectures(); // 初回ロード時に都道府県一覧を取得
-    setLoading(false); // ロード完了
   }, []);
 
   if (loading) {
@@ -57,11 +55,11 @@ const PrefectureCheckbox = ({ onPrefectureChange }) => {
 
 export default function BOX() {
   const [populationData, setPopulationData] = useState([]);
-  const [prefCode, setPrefCode] = useState(null); // 初期状態で `prefCode` は `null`
+  const [prefCode, setPrefCode] = useState(""); // 初期状態で `prefCode` は空の文字列
 
   const fetchPopulationData = useCallback(
     async (prefCode) => {
-      if (!prefCode) return; // `prefCode` が `null` のときは実行しない
+      if (!prefCode) return; // `prefCode` が空の文字列の場合は実行しない
       try {
         const response = await fetch(
           `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?prefCode=${prefCode}`,
@@ -82,7 +80,7 @@ export default function BOX() {
         console.error("Error fetching population data:", error);
       }
     },
-    [prefCode]
+    []
   );
 
   useEffect(() => {
@@ -91,7 +89,7 @@ export default function BOX() {
 
   const handlePrefectureChange = (e) => {
     const newPrefCode = parseInt(e.target.value); // チェックボックスから `prefCode` を取得
-    setPrefCode(newPrefCode); // `prefCode` を更新
+    setPrefCode(newPrefCode.toString()); // `prefCode` を更新
   };
 
   return (

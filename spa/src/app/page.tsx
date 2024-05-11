@@ -2,6 +2,7 @@
 
 import PopulationLineChart from "./components/PopulationLineChart";
 import { useCallback, useEffect, useState } from "react";
+import { default as BOX } from "./components/checkbox";
 
 type YearlyPopulationData = {
   year: number;
@@ -45,7 +46,9 @@ export default function Home() {
     <main className="flex flex-col items-center justify-center">
       <h1>RESAS</h1>
       <div>
-        <PopulationLineChart data={populationData} /> {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
+      {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
+        <PopulationLineChart data={populationData} />
+        {/* <BOX /> */}
       </div>
     </main>
   );
