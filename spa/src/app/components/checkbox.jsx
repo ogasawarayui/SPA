@@ -1,42 +1,7 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 import PopulationLineChart from "./components/PopulationLineChart";
 
-// PrefectureCheckbox コンポーネントは、チェックボックスを生成し、選択時にコールバックを呼び出します
-const PrefectureCheckbox = ({ onPrefectureChange }) => {
-  const [prefectures, setPrefectures] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // 都道府県一覧を取得して、チェックボックスとして生成
-  const fetchPrefectures = async () => {
-    try {
-      const response = await fetch(
-        "https://opendata.resas-portal.go.jp/api/v1/prefectures",
-        {
-          headers: {
-            "X-API-KEY": "DgHX6Bc4TbS3wEEhfg6MIYZKXlgR5woG568BSG31",
-          },
-        }
-      );
-      const data = await response.json();
-      setPrefectures(data.result || []); // データがなければ空のリスト
-    } catch (error) {
-      console.error("Error fetching prefectures:", error);
-      setPrefectures([]); // エラー時に空のリスト
-    } finally {
-      setLoading(false); // ロード完了
-    }
-  };
-
-  useEffect(() => {
-    fetchPrefectures(); // 初回ロード時に都道府県一覧を取得
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>; // ローディング中のメッセージ
-  }
-
+const PrefectureCheckbox = ({ prefectures, onCheckboxChange }) => {
   return (
     <div>
       {prefectures.map((prefecture) => (
@@ -44,7 +9,7 @@ const PrefectureCheckbox = ({ onPrefectureChange }) => {
           <input
             type="checkbox"
             value={prefecture.prefCode}
-            onChange={onPrefectureChange} // 選択時のハンドラ
+            onChange={onCheckboxChange}
           />
           {prefecture.prefName}
         </label>
@@ -55,48 +20,66 @@ const PrefectureCheckbox = ({ onPrefectureChange }) => {
 
 export default function BOX() {
   const [populationData, setPopulationData] = useState([]);
-  const [prefCode, setPrefCode] = useState(""); // 初期状態で `prefCode` は空の文字列
+  const [checkedPrefectures, setCheckedPrefectures] = useState([]);
 
-  const fetchPopulationData = useCallback(
-    async (prefCode) => {
-      if (!prefCode) return; // `prefCode` が空の文字列の場合は実行しない
-      try {
-        const response = await fetch(
-          `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?prefCode=${prefCode}`,
-          {
-            headers: {
-              "X-API-KEY": "DgHX6Bc4TbS3wEEhfg6MIYZKXlgR5woG568BSG31", // API キーを追加
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const populationComposition = data.result.data[0]?.data || []; // データがあるか確認してから配列を取得
-          setPopulationData(populationComposition); // データをセット
-        } else {
-          console.error("Failed to fetch population data");
+  const fetchPopulationData = useCallback(async (prefCode) => {
+    try {
+      const response = await fetch(
+        `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?prefCode=${prefCode}`,
+        {
+          headers: {
+            "X-API-KEY": "DgHX6Bc4TbS3wEEhfg6MIYZKXlgR5woG568BSG31",
+          },
         }
-      } catch (error) {
-        console.error("Error fetching population data:", error);
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch population data");
       }
-    },
-    []
-  );
+      const data = await response.json();
+      return data.result.data[0]?.data || [];
+    } catch (error) {
+      console.error("Error fetching population data:", error);
+      return [];
+    }
+  }, []);
+
+  const handleCheckboxChange = (e) => {
+    const selectedPrefectureCode = e.target.value;
+    if (e.target.checked) {
+      setCheckedPrefectures((prevCheckedPrefectures) => [
+        ...prevCheckedPrefectures,
+        selectedPrefectureCode,
+      ]);
+    } else {
+      setCheckedPrefectures((prevCheckedPrefectures) =>
+        prevCheckedPrefectures.filter(
+          (code) => code !== selectedPrefectureCode
+        )
+      );
+    }
+  };
 
   useEffect(() => {
-    fetchPopulationData(prefCode); // `prefCode` が変更されるたびにデータを取得
-  }, [prefCode, fetchPopulationData]);
+    const fetchDataForSelectedPrefectures = async () => {
+      const populationDataPromises = checkedPrefectures.map((prefCode) =>
+        fetchPopulationData(prefCode)
+      );
+      const populationDataArrays = await Promise.all(populationDataPromises);
+      const mergedPopulationData = populationDataArrays.flat();
+      setPopulationData(mergedPopulationData);
+    };
 
-  const handlePrefectureChange = (e) => {
-    const newPrefCode = parseInt(e.target.value); // チェックボックスから `prefCode` を取得
-    setPrefCode(newPrefCode.toString()); // `prefCode` を更新
-  };
+    fetchDataForSelectedPrefectures();
+  }, [checkedPrefectures, fetchPopulationData]);
 
   return (
     <main className="flex flex-col items-center justify-center">
       <h1>RESAS</h1>
       <div>
-        <PrefectureCheckbox onPrefectureChange={handlePrefectureChange} />
+        <PrefectureCheckbox
+          prefectures={prefectures}
+          onCheckboxChange={handleCheckboxChange}
+        />
         {populationData.length > 0 && (
           <PopulationLineChart data={populationData} />
         )}
