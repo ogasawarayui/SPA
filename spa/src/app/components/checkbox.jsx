@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import PopulationLineChart from "./components/PopulationLineChart";
+import PrefectureCheckbox from "./components/PrefectureCheckbox";
 
 const PrefectureCheckbox = ({ prefectures, onCheckboxChange }) => {
   return (
@@ -21,7 +22,30 @@ const PrefectureCheckbox = ({ prefectures, onCheckboxChange }) => {
 export default function BOX() {
   const [populationData, setPopulationData] = useState([]);
   const [checkedPrefectures, setCheckedPrefectures] = useState([]);
+  const [prefectures, setPrefectures] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // 都道府県リストを取得する関数
+  const fetchPrefectures = useCallback(async () => {
+    try {
+      const response = await fetch(
+        "https://opendata.resas-portal.go.jp/api/v1/prefectures",
+        {
+          headers: {
+            "X-API-KEY": "DgHX6Bc4TbS3wEEhfg6MIYZKXlgR5woG568BSG31",
+          },
+        }
+      );
+      const data = await response.json();
+      setPrefectures(data.result || []);
+    } catch (error) {
+      console.error("Error fetching prefectures:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // 都道府県の人口データを取得する関数
   const fetchPopulationData = useCallback(async (prefCode) => {
     try {
       const response = await fetch(
@@ -60,6 +84,10 @@ export default function BOX() {
   };
 
   useEffect(() => {
+    fetchPrefectures();
+  }, [fetchPrefectures]);
+
+  useEffect(() => {
     const fetchDataForSelectedPrefectures = async () => {
       const populationDataPromises = checkedPrefectures.map((prefCode) =>
         fetchPopulationData(prefCode)
@@ -71,6 +99,10 @@ export default function BOX() {
 
     fetchDataForSelectedPrefectures();
   }, [checkedPrefectures, fetchPopulationData]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="flex flex-col items-center justify-center">
