@@ -64,7 +64,7 @@ const PopulationLineChart = ({
   return <Line options={options} data={chartData} />;
 };
 
-const DataFetcher = () => {
+const DataFetcher = ({ setPrefCode }) => {
   const [data, setData] = useState<YearlyPopulationData[]>([]);
 
   const fetchData = useCallback(async () => {
@@ -95,15 +95,22 @@ const DataFetcher = () => {
     fetchData(); // 初回フェッチ
   }, [fetchData]);
 
+  const handleCheckboxChange = (prefCode: string) => {
+    setPrefCode(prefCode);
+  };
+
   return (
     <div>
       <h2>データ一覧</h2>
       <ul>
         {data.map((item, index) => (
-          <li>
-      <input type="checkbox" name={item.prefCode} id={`populationCheckbox${index}`}/>
-      <label htmlFor={`populationCheckbox${index}`}>{item.prefName}</label>
-      </li>))}
+          <li className="display:block;">
+            <input type="checkbox"
+              name={item.prefCode}
+              id={`populationCheckbox${index}`}
+              onChange= {() => handleCheckboxChange(item.prefCode ?? "")} />
+            <label htmlFor={`populationCheckbox${index}`}>{item.prefName}</label>
+          </li>))}
       </ul>
       <PopulationLineChart data={data} /> {/* 折れ線グラフを表示 */}
     </div>

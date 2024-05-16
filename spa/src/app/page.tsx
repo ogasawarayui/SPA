@@ -2,7 +2,6 @@
 
 import PopulationLineChart from "./components/PopulationLineChart";
 import { useCallback, useEffect, useState } from "react";
-import { default as BOX } from "./components/checkbox";
 
 type YearlyPopulationData = {
   year: number;
@@ -39,20 +38,21 @@ export default function Home() {
   useEffect(() => {
     fetchPopulationData(); // 関数の実行
   }, [fetchPopulationData]);
-  const handleClick = () => {
-    setPrefCode("30");
-  }
-  return (
-    <main className="flex flex-col items-center justify-center">
-      <h1>RESAS</h1>
-      <div>
-      {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
-        <PopulationLineChart data={populationData} />
-        {/* <BOX /> */}
-      </div>
-    </main>
-  );
 }
+return (
+  <main className="flex flex-col items-center justify-center">
+    <h1>RESAS</h1>
+    <div>
+      {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
+      <PopulationLineChart
+        data={populationData}
+        prefCode={prefCode}
+        setPrefCode={setPrefCode} />
+    </div>
+  </main>
+);
+}
+
 
 /*
 この内容では、グラフのデータを取得してPopulationLineChartコンポーネントで描画しているだけですが、
