@@ -108,7 +108,7 @@ const DataFetcher = ({ setPrefCode }) => {
             <input type="checkbox"
               name={item.prefCode}
               id={`populationCheckbox${index}`}
-              onChange= {() => handleCheckboxChange(item.prefCode ?? "")} />
+              onChange={() => handleCheckboxChange(item.prefCode ?? "")} />
             <label htmlFor={`populationCheckbox${index}`}>{item.prefName}</label>
           </li>))}
       </ul>
