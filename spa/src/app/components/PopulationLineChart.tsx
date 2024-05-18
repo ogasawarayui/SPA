@@ -85,7 +85,7 @@ const DataFetcher = ({ setPrefCode }) => {
 
       const newData = await response.json();
       console.log(newData);
-      setData((prevData) => [...prevData, ...newData.result]); // 既存のデータに追加
+      setData((prevData) => [...newData.result]); // 既存のデータに追加
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -100,9 +100,9 @@ const DataFetcher = ({ setPrefCode }) => {
   };
 
   return (
-    <div className="w-3/5">
-      <h2>データ一覧</h2>
-      <ul className="flex">
+    <div className="w-[600px]">
+      <h2>都道府県</h2>
+      <ul className="flex flex-wrap justify-center">
         {data.map((item, index) => (
           <li className="flex">
             <input type="checkbox"

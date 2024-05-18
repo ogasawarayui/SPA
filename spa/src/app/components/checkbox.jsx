@@ -1,3 +1,6 @@
+checkbox
+
+
 import { useCallback, useEffect, useState } from "react";
 import PopulationLineChart from "./components/PopulationLineChart";
 import PrefectureCheckbox from "./components/PrefectureCheckbox";
