@@ -8,7 +8,6 @@ type YearlyPopulationData = {
   value: number;
 };
 
-
 export default function Home() {
   const [populationData, setPopulationData] = useState<YearlyPopulationData[]>([]);
   const [prefCode, setPrefCode] = useState("20")
@@ -38,19 +37,19 @@ export default function Home() {
   useEffect(() => {
     fetchPopulationData(); // 関数の実行
   }, [fetchPopulationData]);
-}
-return (
-  <main className="flex flex-col items-center justify-center">
-    <h1>RESAS</h1>
-    <div>
-      {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
-      <PopulationLineChart
-        data={populationData}
-        prefCode={prefCode}
-        setPrefCode={setPrefCode} />
-    </div>
-  </main>
-);
+
+  return (
+    <main className="flex flex-col items-center justify-center">
+      <h1>RESAS</h1>
+      <div>
+        {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
+        <PopulationLineChart
+          data={populationData}
+          prefCode={prefCode}
+          setPrefCode={setPrefCode} />
+      </div>
+    </main>
+  );
 }
 
 

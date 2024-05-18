@@ -100,16 +100,16 @@ const DataFetcher = ({ setPrefCode }) => {
   };
 
   return (
-    <div>
+    <div className="w-3/5">
       <h2>データ一覧</h2>
-      <ul>
+      <ul className="flex">
         {data.map((item, index) => (
-          <li className="display:block;">
+          <li className="flex">
             <input type="checkbox"
               name={item.prefCode}
               id={`populationCheckbox${index}`}
               onChange={() => handleCheckboxChange(item.prefCode ?? "")} />
-            <label htmlFor={`populationCheckbox${index}`}>{item.prefName}</label>
+            <label className="w-28" htmlFor={`populationCheckbox${index}`}>{item.prefName}</label>
           </li>))}
       </ul>
       <PopulationLineChart data={data} /> {/* 折れ線グラフを表示 */}
