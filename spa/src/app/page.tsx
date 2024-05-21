@@ -44,9 +44,8 @@ export default function Home() {
       <h1>RESAS</h1>
       <div>
         {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
-        <DataFetcher setPrefCode={setPrefCode}/>
-        <PopulationLineChart
-          data={populationData}/>
+        <DataFetcher setPrefCode={setPrefCode} />
+        <PopulationLineChart data={populationData} />
       </div>
     </main>
   );
