@@ -1,7 +1,8 @@
 "use client";
 
-import PopulationLineChart from "./components/PopulationLineChart";
 import { useCallback, useEffect, useState } from "react";
+import { PopulationLineChart } from "./components/PopulationLineChart";
+import { DataFetcher } from "./components/checkbox";
 
 type YearlyPopulationData = {
   year: number;
@@ -10,7 +11,7 @@ type YearlyPopulationData = {
 
 export default function Home() {
   const [populationData, setPopulationData] = useState<YearlyPopulationData[]>([]);
-  const [prefCode, setPrefCode] = useState("20")
+  const [prefCode, setPrefCode] = useState("");
 
   const fetchPopulationData = useCallback(async () => {
     const response = await fetch(
@@ -43,10 +44,9 @@ export default function Home() {
       <h1>RESAS</h1>
       <div>
         {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
+        <DataFetcher setPrefCode={setPrefCode}/>
         <PopulationLineChart
-          data={populationData}
-          prefCode={prefCode}
-          setPrefCode={setPrefCode} />
+          data={populationData}/>
       </div>
     </main>
   );
