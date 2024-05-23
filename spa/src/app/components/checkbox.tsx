@@ -4,11 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { YearlyPopulationData } from "./PopulationLineChart";
 
 type DataFetcherProps = {
-  setPrefCode: (prefCode: string) => void;
+  handleCheckboxChange: (prefCode: string) => void;
 };
 
-export const DataFetcher = ({ setPrefCode }: DataFetcherProps) => {
-  const [data, setData] = useState<YearlyPopulationData[]>([]);
+export const DataFetcher = ({ handleCheckboxChange }: DataFetcherProps) => {
+  const [data, setData] = useState<{ prefCode: string; prefName: string }[]>([]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -28,7 +28,7 @@ export const DataFetcher = ({ setPrefCode }: DataFetcherProps) => {
 
       const newData = await response.json();
       console.log(newData);
-      setData((prevData) => [...newData.result]); // 既存のデータに追加
+      setData(newData.result);// 既存のデータに追加
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -38,16 +38,12 @@ export const DataFetcher = ({ setPrefCode }: DataFetcherProps) => {
     fetchData(); // 初回フェッチ
   }, [fetchData]);
 
-  const handleCheckboxChange = (prefCode: string) => {
-    setPrefCode(prefCode);
-  };
-
   return (
     <div className="w-[600px]">
       <h2>都道府県</h2>
       <ul className="flex flex-wrap justify-center">
         {data.map((item, index) => (
-          <li className="flex">
+          <li className="flex" key={item.prefCode}>
             <input type="checkbox"
               name={item.prefCode}
               id={`populationCheckbox${index}`}

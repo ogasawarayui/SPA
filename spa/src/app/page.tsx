@@ -9,11 +9,17 @@ type YearlyPopulationData = {
   value: number;
 };
 
-export default function Home() {
-  const [populationData, setPopulationData] = useState<YearlyPopulationData[]>([]);
-  const [prefCode, setPrefCode] = useState("");
+type PrefPopulationData = {
+  prefCode: string;
+  prefName: string;
+  data: YearlyPopulationData[];
+};
 
-  const fetchPopulationData = useCallback(async () => {
+export default function Home() {
+  const [populationData, setPopulationData] = useState<PrefPopulationData[]>([]);
+  const [selectedPrefCodes, setSelectedPrefCodes] = useState<string[]>([]);
+
+  const fetchPopulationData = useCallback(async (prefCode: string) => {
     const response = await fetch(
       // クエリパラメーターで東京のデータを取得しているので、ここを変更すればその都度データを取得できます(クエリパラメーターっていうのは、URLの末尾についている?からのパラメーター。?の後に〇〇=〇〇という感じで書くとURL経由でデータを渡せる)
       // ここではcityCode=11362&prefCode=11というのがクエリパラメーターで、11362は東京の市区町村コード、11は東京の都道府県コードです。
@@ -31,20 +37,44 @@ export default function Home() {
     }
 
     const data = await response.json(); // 取得したデータをJSON形式に変換
-    setPopulationData(data.result.data[0].data); // 取得したデータをstateにセットしています(data.result.data[0].dataには年ごとのデータが入っています)
-  }, [prefCode]);
+    const prefName = data.result.prefName;
 
-  // useEffectはページがロードされた時に一度だけ実行されます
+    const newPrefData = {
+      prefCode,
+      prefName,
+      data: data.result.data[0].data,
+    };
+
+    setPopulationData((prevData) => [...prevData, newPrefData]);
+  }, []);
+
   useEffect(() => {
-    fetchPopulationData(); // 関数の実行
-  }, [fetchPopulationData]);
+    selectedPrefCodes.forEach((prefCode) => {
+      if (!populationData.some((data) => data.prefCode === prefCode)) {
+        fetchPopulationData(prefCode);
+      }
+    });
+  }, [selectedPrefCodes, fetchPopulationData, populationData]);
+
+  const handleCheckboxChange = (prefCode: string) => {
+    setSelectedPrefCodes((prevCodes) => {
+      if (prevCodes.includes(prefCode)) {
+        setPopulationData((prevData) =>
+          prevData.filter((data) => data.prefCode !== prefCode)
+        );
+        return prevCodes.filter((code) => code !== prefCode);
+      } else {
+        return [...prevCodes, prefCode];
+      }
+    });
+  };
 
   return (
     <main className="flex flex-col items-center justify-center">
       <h1>RESAS</h1>
       <div>
         {/* コンポーネントにデータ(取得したグラフのデータ)を渡す */}
-        <DataFetcher setPrefCode={setPrefCode} />
+        <DataFetcher handleCheckboxChange={handleCheckboxChange} />
         <PopulationLineChart data={populationData} />
       </div>
     </main>

@@ -31,10 +31,16 @@ export type YearlyPopulationData = {
   value: number;
 };
 
+type PrefPopulationData = {
+  prefCode: string;
+  prefName: string;
+  data: YearlyPopulationData[];
+};
+
 export const PopulationLineChart = ({
   data = [],
 }: {
-  data: YearlyPopulationData[];
+  data: PrefPopulationData[];
 }) => {
   const options: ChartOptions<'line'> = {
     responsive: true,
@@ -50,15 +56,13 @@ export const PopulationLineChart = ({
   };
 
   const chartData = {
-    labels: data.map((item) => item.year),
-    datasets: [
-      {
-        label: "総人口",
-        data: data.map((item) => item.value),
-        borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "rgba(75, 192, 192, 0.5)",
-      },
-    ],
+    labels: data.length > 0 ? data[0].data.map((item) => item.year) : [],
+    datasets: data.map((prefData) => ({
+      label: prefData.prefName,
+      data: prefData.data.map((item) => item.value),
+      borderColor: "rgb(75, 192, 192)",
+      backgroundColor: "rgba(75, 192, 192, 0.5)",
+    })),
   };
 
   return <Line options={options} data={chartData} />;
