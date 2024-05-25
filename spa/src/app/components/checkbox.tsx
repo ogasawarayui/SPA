@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 type DataFetcherProps = {
-  handleCheckboxChange: (prefCode: string) => void;
+  handleCheckboxChange: (prefCode: string,prefName : string) => void;
 };
 
 export const DataFetcher = ({ handleCheckboxChange }: DataFetcherProps) => {
@@ -46,7 +46,7 @@ export const DataFetcher = ({ handleCheckboxChange }: DataFetcherProps) => {
             <input type="checkbox"
               name={item.prefCode}
               id={`populationCheckbox${index}`}
-              onChange={() => handleCheckboxChange(item.prefCode ?? "")} />
+              onChange={() => handleCheckboxChange(item.prefCode,item.prefName)} />
             <label className="w-28" htmlFor={`populationCheckbox${index}`}>{item.prefName}</label>
           </li>))}
       </ul>

@@ -10,6 +10,7 @@ type PopulationLineChartProps = {
 };
 
 export const PopulationLineChart = ({ data }: PopulationLineChartProps) => {
+  console.log("data",data);
   const chartData = {
     labels: data[0]?.data.map((item) => item.year) || [],
     datasets: data.map((prefData) => ({
@@ -25,7 +26,7 @@ export const PopulationLineChart = ({ data }: PopulationLineChartProps) => {
 
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
-  let color = '#ffc0cb';
+  let color = '#';
   for (let i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
