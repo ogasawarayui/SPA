@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { YearlyPopulationData } from "./PopulationLineChart";
 
 type DataFetcherProps = {
   handleCheckboxChange: (prefCode: string) => void;

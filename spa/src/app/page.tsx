@@ -3,17 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { PopulationLineChart } from "./components/PopulationLineChart";
 import { DataFetcher } from "./components/checkbox";
-
-type YearlyPopulationData = {
-  year: number;
-  value: number;
-};
-
-type PrefPopulationData = {
-  prefCode: string;
-  prefName: string;
-  data: YearlyPopulationData[];
-};
+import { PrefPopulationData } from "../types";
 
 export default function Home() {
   const [populationData, setPopulationData] = useState<PrefPopulationData[]>([]);
