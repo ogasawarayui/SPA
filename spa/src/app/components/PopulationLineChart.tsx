@@ -21,7 +21,25 @@ export const PopulationLineChart = ({ data }: PopulationLineChartProps) => {
     })),
   };
 
-  return <Line data={chartData} />;
+  const options = {
+    responsive: true,
+    scales: {
+      x: {
+          title: {
+              display: true,
+              text: '年度'
+          }
+      },
+      y: {
+          title: {
+              display: true,
+              text: '人口数'
+          }
+      }
+    },
+  };
+
+  return <Line data={chartData} options={options} />;
 };
 
 const getRandomColor = () => {
